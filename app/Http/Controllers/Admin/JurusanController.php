@@ -38,6 +38,8 @@ class JurusanController extends Controller
             'nama_jurusan' => $request->nama_jurusan,
         ]);
 
+        notify()->success('Data jurusan berhasil ditambahkan', 'Berhasil');
+
         return redirect()->route('admin.data-jurusan')->with('success', 'Jurusan berhasil ditambahkan');
     }
 
@@ -62,6 +64,8 @@ class JurusanController extends Controller
             'nama_jurusan' => $request->nama_jurusan
         ]);
 
+        notify()->success('Data jurusan berhasil diperbarui', 'Berhasil');
+
         return redirect()->route('admin.data-jurusan')->with('success', 'Jurusan berhasil diperbarui');
     }
 
@@ -71,6 +75,8 @@ class JurusanController extends Controller
     public function destroy(Jurusan $jurusan)
     {
         $jurusan->delete();
+
+        notify()->success('Data jurusan berhasil dihapus', 'Berhasil');
 
         return redirect()->route('admin.data-jurusan')->with('success', 'Jurusan berhasil dihapus');
     }

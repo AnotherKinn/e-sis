@@ -7,6 +7,6 @@ services:
       - "9601:9601"   # dashboard soketi
     environment:
       DEBUG: "1"
-      DEFAULT_APP_ID: "myapp-id"
-      DEFAULT_APP_KEY: "myapp-key"
-      DEFAULT_APP_SECRET: "myapp-secret"
+      DEFAULT_APP_ID: e-sis-app
+      DEFAULT_APP_KEY: e-sis-key
+      DEFAULT_APP_SECRET: e-sis-secret

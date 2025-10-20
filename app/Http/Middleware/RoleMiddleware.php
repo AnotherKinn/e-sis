@@ -8,29 +8,43 @@ use Illuminate\Support\Facades\Auth;
 
 class RoleMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  mixed ...$roles
-     * @return mixed
-     */
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        $user = Auth::user();
+        $user = null;
+        $guard = null;
 
-        if (!$user) {
-            return redirect('/login');
+        // cek guard web (users: siswa & admin)
+        if (Auth::guard('web')->check()) {
+            $user = Auth::guard('web')->user();
+            $guard = 'web';
+        }
+        // cek guard petugas
+        elseif (Auth::guard('petugas')->check()) {
+            $user = Auth::guard('petugas')->user();
+            $guard = 'petugas';
         }
 
-        // cek apakah role user ada dalam array $roles
-        if (!in_array($user->role, $roles)) {
-            // kalau role tidak sesuai, arahkan sesuai role
-            if ($user->role === 'admin' || $user->role === 'petugas') {
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        // jika login sebagai siswa/admin (dari tabel users)
+        if ($guard === 'web') {
+            if ($user->role === 'admin') {
+                if (!in_array('admin', $roles)) {
+                    return redirect()->route('admin.dashboard');
+                }
+            } elseif ($user->role === 'siswa') {
+                if (!in_array('siswa', $roles)) {
+                    return redirect()->route('siswa.dashboard');
+                }
+            }
+        }
+
+        // jika login sebagai petugas → anggap setara admin
+        if ($guard === 'petugas') {
+            if (!in_array('petugas', $roles) && !in_array('admin', $roles)) {
                 return redirect()->route('admin.dashboard');
-            } else {
-                return redirect()->route('siswa.dashboard');
             }
         }
 

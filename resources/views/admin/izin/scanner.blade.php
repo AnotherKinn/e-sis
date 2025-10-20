@@ -1,7 +1,13 @@
 <x-app-layout>
-    <div class="p-6 bg-white rounded">
-        <h2 class="text-xl font-bold mb-4">Scanner QR Code</h2>
-        <div id="reader" style="width: 400px;"></div>
+    <div class="">
+        <h1 class="text-xl font-bold mb-4 text-[#224779]">Scan QR Code</h1>
+        <hr class="border-1 border-[#224779]">
+    </div>
+    <div class="p-4 md:p-6 bg-white rounded-lg w-full max-w-lg mx-auto mt-12">
+        <h1 class="text-xl font-bold mb-4 text-black text-center">Scan QR Code</h1>
+        <hr class="border-1 border-[#224779]">
+        <br>
+        <div id="reader" style="width: 100%;"></div>
     </div>
 
     <!-- 1. Load library dulu -->

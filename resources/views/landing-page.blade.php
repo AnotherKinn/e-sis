@@ -1,3 +1,23 @@
+<!-- @auth('web')
+    @php
+        $user = Auth::guard('web')->user();
+        if ($user->role === 'admin') {
+            header('Location: ' . route('admin.dashboard'));
+            exit;
+        } elseif ($user->role === 'siswa') {
+            header('Location: ' . route('siswa.dashboard'));
+            exit;
+        }
+    @endphp
+@endauth
+
+@auth('petugas')
+    @php
+        header('Location: ' . route('admin.dashboard'));
+        exit;
+    @endphp
+@endauth -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,10 +49,39 @@
                         <br>
                         Mengajukan izin kini lebih praktis & transparan
                     </p>
+                    @guest
+                    {{-- Jika belum login --}}
                     <a href="{{ route('login') }}"
                         class="mt-4 px-6 py-3 bg-blue-500 rounded-full text-white font-bold hover:bg-blue-600 transition duration-200 shadow-md md:self-start">
                         Mulai Gunakan
                     </a>
+                    @endguest
+
+                    @auth('web')
+                    @php
+                    $user = Auth::guard('web')->user();
+                    if ($user->role === 'admin') {
+                    $dashboard = route('admin.dashboard');
+                    } elseif ($user->role === 'siswa') {
+                    $dashboard = route('siswa.dashboard');
+                    } else {
+                    $dashboard = route('login');
+                    }
+                    @endphp
+
+                    <a href="{{ $dashboard }}"
+                        class="mt-4 px-6 py-3 bg-green-600 rounded-full text-white font-bold hover:bg-green-600 transition duration-200 shadow-md md:self-start">
+                        Buka Dashboard
+                    </a>
+                    @endauth
+
+                    @auth('petugas')
+                    <a href="{{ route('admin.dashboard') }}"
+                        class="mt-4 px-6 py-3 bg-green-600 rounded-full text-white font-bold hover:bg-green-600 transition duration-200 shadow-md md:self-start">
+                        Buka Dashboard
+                    </a>
+                    @endauth
+
                 </div>
 
                 {{-- Ilustrasi Atas --}}
@@ -318,7 +367,7 @@
     </footer>
 
 
-    <script>
+    <!-- <script>
         document.addEventListener('DOMContentLoaded', () => {
             const container = document.querySelector('.scrolling-container');
 
@@ -356,7 +405,7 @@
             });
         });
 
-    </script>
+    </script> -->
 </body>
 
 </html>

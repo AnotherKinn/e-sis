@@ -4,3 +4,40 @@
 @tailwind utilities;
 
 
+/* Notifikasi masuk */
+.notify {
+    animation: slideInRight 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Animasi masuk */
+@keyframes slideInRight {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Animasi keluar */
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Class tambahan untuk keluar */
+.notify.hide {
+    animation: slideOutRight 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+[x-cloak] {
+    display: none !important;
+}

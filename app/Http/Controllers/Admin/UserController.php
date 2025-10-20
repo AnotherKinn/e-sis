@@ -64,23 +64,36 @@ class UserController extends Controller
 
         try {
             Excel::import(new UserImport, $request->file('file'));
-            return redirect()->route('admin.data-pengguna')
-                ->with('success', 'Data berhasil diimport!');
+
+            notify()->success('Berhasil', 'Data pengguna berhasil diimport');
+
+            return redirect()->route('admin.data-pengguna');
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
-            $errors = [];
+
             foreach ($failures as $failure) {
-                $errors[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
+                // Ambil data row yang gagal
+                $rowData = $failure->values();
+
+                $nama = $rowData['nama'] ?? '-';
+                $nis  = $rowData['nis'] ?? '-';
+
+                // Buat pesan error lebih detail
+                $errorMessage = "Baris {$failure->row()} | Nama: {$nama} | NIS: {$nis} | Error: "
+                    .implode(', ', $failure->errors());
+
+                // ✅ Pakai Laravel Notify untuk tampilkan notifikasi error
+                notify()->error($errorMessage, 'Gagal Import');
             }
 
-            return redirect()->route('admin.data-pengguna')
-                ->with('import_errors', $errors);
+            return redirect()->route('admin.data-pengguna');
         }
     }
 
 
     public function downloadFormat()
     {
+        notify()->success('Berhasil download format', 'Format import data pengguna berhasil di download');
         return Excel::download(new UserFormatExport, 'format_user.xlsx');
     }
 

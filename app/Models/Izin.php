@@ -57,4 +57,10 @@ class Izin extends Model
     {
         return $this->belongsTo(Petugas::class, 'id_petugas');
     }
+
+    // Relasi ke User (siswa)
+    public function siswa()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

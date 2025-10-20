@@ -43,7 +43,10 @@ class KelasController extends Controller
         ]);
 
         Kelas::create($request->all());
-        return redirect()->route('admin.data-kelas')->with('success', 'Kelas berhasil ditambahkan.');
+
+        notify()->success('Data kelas berhasil ditambahkan', 'Berhasil');
+
+        return redirect()->route('admin.data-kelas');
     }
 
     public function edit(Kelas $kelas)
@@ -58,12 +61,17 @@ class KelasController extends Controller
         ]);
 
         $kelas->update($request->all());
+
+        notify()->success('Data kelas berhasil diperbarui', 'Berhasil');
+
         return redirect()->route('admin.data-kelas')->with('success', 'Kelas berhasil diperbarui.');
     }
 
     public function destroy(Kelas $kelas)
     {
         $kelas->delete();
+
+        notify()->success('Data kelas berhasil dihapus', 'Berhasil');
         return redirect()->route('admin.data-kelas')->with('success', 'Kelas berhasil dihapus.');
     }
 }

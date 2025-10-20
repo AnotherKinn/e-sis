@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Izin;
 use App\Models\User;
 use App\Models\Kelas;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -16,6 +17,22 @@ class DashboardController extends Controller
         $totalIzin      = Izin::count();
         $izinDisetujui  = Izin::where('status_izin', 'disetujui')->count();
         $izinDitolak    = Izin::where('status_izin', 'ditolak')->count();
+        $izinTerbaru = Izin::with('user')
+            ->where('status_izin', 'menunggu_validasi')
+            ->latest()
+            ->take(5)
+            ->get();
+
+
+        $notifikasi = \App\Models\Notifikasi::where('user_id', Auth::id())
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $jumlahNotifikasi = \App\Models\Notifikasi::where('user_id', Auth::id())
+            ->where('is_read', false)
+            ->count();
+
 
         // Statistik izin per kelas (total dan disetujui)
         // $izinPerKelas = Kelas::withCount([
@@ -54,7 +71,10 @@ class DashboardController extends Controller
             'izinDisetujui',
             'izinDitolak',
             'izinPerKelas',
-            'events'
+            'izinTerbaru',
+            'events',
+            'notifikasi',
+            'jumlahNotifikasi'
         ));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\IzinScannedEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Izin;
 use App\Models\Jurusan;
@@ -9,6 +10,8 @@ use App\Models\Petugas;
 use App\Models\Kelas;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use App\Exports\IzinExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class IzinController extends Controller
 {
@@ -74,6 +77,13 @@ class IzinController extends Controller
         return response()->json($izin);
     }
 
+
+    public function exportExcel(Request $request)
+    {
+        $filters = $request->only(['jurusan_id', 'kelas_id', 'status_izin']);
+        return Excel::download(new IzinExport($filters), 'laporan_izin.xlsx');
+    }
+
     public function cetak($id, Request $request, $token)
     {
         $izin = Izin::with(['user', 'walikelas.kelas'])->findOrFail($id);
@@ -85,18 +95,21 @@ class IzinController extends Controller
 
         $walikelas = $izin->walikelas;
 
-        // ambil petugas dari user yang login, bukan dari query
-        $petugas = Petugas::where('user_id', auth()->id())->with('user')->first();
-
-        if (!$petugas) {
+        // Ambil guard yang sedang aktif
+        if (auth('petugas')->check()) {
+            $petugas = auth('petugas')->user(); // langsung ambil data petugas yang login
+        } else {
             abort(403, 'Anda bukan petugas.');
         }
+
 
         // update status otomatis jadi disetujui
         if ($izin->status_izin !== 'disetujui') {
             $izin->status_izin = 'menunggu_bukti';
             $izin->id_pemberi_izin = $petugas ? $petugas->id : null; // simpan id_petugas
             $izin->save();
+
+            event(new IzinScannedEvent($izin));
         }
 
         // render blade ke PDF

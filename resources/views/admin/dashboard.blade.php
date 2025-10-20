@@ -1,32 +1,121 @@
 <x-app-layout>
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Dashboard</h1>
-        <div class="flex items-center gap-2">
-            <span class="font-medium">{{ Auth::user()->nama }}</span>
-            <i data-lucide="user-circle" class="w-8 h-8"></i>
+    <div class="hidden md:block">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Dashboard</h1>
+            <div class="flex items-center gap-2">
+                <span class="font-medium">{{ Auth::user()->nama }}</span>
+                <i data-lucide="user-circle" class="w-8 h-8"></i>
+            </div>
+        </div>
+
+        <!-- Hero Section -->
+        <div class="bg-[#017BFA] text-white rounded-lg p-6 flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-xl font-bold">Halo, {{ Auth::user()->nama }} 👋</h2>
+                <p>Digitalisasi perizinan, mendukung sekolah modern.</p>
+            </div>
+
+            <!-- ilustrasi guru/siswa -->
+            <div class="flex gap-4">
+                <img src="{{ asset('storage/asset/data-reports.svg') }}" alt="Illustration Data Reports" class="w-40">
+                <img src="{{ asset('storage/asset/resume.svg') }}" alt="Illustration Resume" class="w-40">
+            </div>
+        </div>
+
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column -->
+            <div class="col-span-2 space-y-6">
+                <!-- Ringkasan -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-white shadow-lg rounded-lg p-4 text-center">
+                        <p class="text-gray-500">Total Siswa</p>
+                        <h3 class="text-xl font-bold">{{ $totalSiswa }}</h3>
+                    </div>
+                    <div class="bg-white shadow-lg rounded-lg p-4 text-center">
+                        <p class="text-gray-500">Total Izin Masuk</p>
+                        <h3 class="text-xl font-bold">{{ $totalIzin }}</h3>
+                    </div>
+                    <div class="bg-white shadow-lg rounded-lg p-4 text-center">
+                        <p class="text-gray-500">Izin Disetujui</p>
+                        <h3 class="text-xl font-bold">{{ $izinDisetujui }}</h3>
+                    </div>
+                    <div class="bg-white shadow-lg rounded-lg p-4 text-center">
+                        <p class="text-gray-500">Izin Ditolak</p>
+                        <h3 class="text-xl font-bold">{{ $izinDitolak }}</h3>
+                    </div>
+                </div>
+
+
+
+
+                <!-- Grafik -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h3 class="font-bold mb-4">Statistik Izin Mingguan</h3>
+                    <div id="izinChart" style="height:400px;"></div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+
+            <!-- Kalender -->
+            <div class="bg-white shadow-lg rounded-xl p-4">
+                <h3 class="font-bold mb-4 flex items-center gap-2 text-gray-700">
+                    <i data-lucide="calendar"></i>
+                    Kalender
+                </h3>
+                <div id="calendar" class="fc-theme-tailwind"></div>
+
+                <!-- Izin Terbaru -->
+                <div class="bg-white shadow-lg rounded-lg p-4 mt-10">
+                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                        <i data-lucide="clock"></i>
+                        Izin Yang Perlu Divalidasi
+                    </h3>
+
+                    @if($izinTerbaru->isEmpty())
+                    <p class="text-sm text-gray-500 text-center">Belum ada izin yang perlu divalidasi.</p>
+                    @else
+                    <ul class="space-y-3">
+                        @foreach($izinTerbaru as $izin)
+                        <li class="flex justify-between">
+                            <span>{{ $izin->user->nama }}</span>
+                            <span class="text-sm text-gray-500 capitalize">{{ $izin->jenis_izin }}</span>
+                        </li>
+                        @endforeach
+                    </ul>
+                    @endif
+                </div>
+
+            </div>
+
+
+
         </div>
     </div>
+    </div>
 
-    <!-- Hero Section -->
-    <div class="bg-[#017BFA] text-white rounded-lg p-6 flex justify-between items-center mb-6">
-        <div>
-            <h2 class="text-xl font-bold">Halo, {{ Auth::user()->nama }} 👋</h2>
-            <p>Digitalisasi perizinan, mendukung sekolah modern.</p>
-        </div>
+    <div class="md:hidden pt-0">
+        <!-- Hero Section -->
+        <div class="bg-[#017BFA] text-white rounded-lg p-6 flex justify-between items-center mb-6 m-2 mt-0">
+            <div>
+                <h2 class="text-xl font-bold">Halo, {{ Auth::user()->nama }} 👋</h2>
+                <p>Digitalisasi perizinan, mendukung sekolah modern.</p>
+            </div>
 
-        <!-- ilustrasi guru/siswa -->
-        <div class="flex gap-4">
-            <img src="{{ asset('storage/assets/data-reports.svg') }}" alt="Illustration Data Reports" class="w-40">
-            <img src="{{ asset('storage/assets/resume.svg') }}" alt="Illustration Resume" class="w-40">
-        </div>
+            <!-- ilustrasi guru/siswa -->
+            {{-- <div class="flex gap-4">
+                <img src="{{ asset('storage/asset/data-reports.svg') }}" alt="Illustration Data Reports" class="w-40">
+            <img src="{{ asset('storage/asset/resume.svg') }}" alt="Illustration Resume" class="w-40">
+        </div> --}}
     </div>
 
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-2 gap-6 m-2">
         <!-- Left Column -->
         <div class="col-span-2 space-y-6">
             <!-- Ringkasan -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-2 gap-4">
                 <div class="bg-white shadow-lg rounded-lg p-4 text-center">
                     <p class="text-gray-500">Total Siswa</p>
                     <h3 class="text-xl font-bold">{{ $totalSiswa }}</h3>
@@ -44,52 +133,33 @@
                     <h3 class="text-xl font-bold">{{ $izinDitolak }}</h3>
                 </div>
             </div>
-
-
-
-
-            <!-- Grafik -->
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="font-bold mb-4">Statistik Izin Mingguan</h3>
-                <div id="izinChart" style="height:400px;"></div>
-            </div>
         </div>
 
         <!-- Right Column -->
 
-        <!-- Kalender -->
-        <div class="bg-white shadow-lg rounded-xl p-4">
-            <h3 class="font-bold mb-4 flex items-center gap-2 text-gray-700">
-                <i data-lucide="calendar"></i>
-                Kalender
-            </h3>
-            <div id="calendar" class="fc-theme-tailwind"></div>
-
-            <!-- Izin Terbaru -->
-            <div class="bg-white shadow-lg rounded-lg p-4 mt-10">
-                <h3 class="font-bold mb-4 flex items-center gap-2">
-                    <i data-lucide="clock"></i>
-                    Izin Yang Perlu Divalidasi
-                </h3>
-                <ul class="space-y-3">
-                    <li class="flex justify-between">
-                        <span>Budi Utomo</span>
-                        <span class="text-sm text-gray-500">Izin</span>
-                    </li>
-                    <li class="flex justify-between">
-                        <span>Adnan</span>
-                        <span class="text-sm text-gray-500">Sakit</span>
-                    </li>
-                    <li class="flex justify-between">
-                        <span>Risky</span>
-                        <span class="text-sm text-gray-500">Izin</span>
-                    </li>
-                </ul>
-            </div>
+        <div class="col-span-2">
+            <div class="w-full flex bg-white shadow-lg rounded-xl p-4">
+                <!-- Izin Terbaru -->
+                <div class="bg-white shadow-lg rounded-lg p-4 w-full">
+                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                        <i data-lucide="clock"></i>
+                        Izin Yang Perlu Divalidasi
+                    </h3>
+                    <ul class="space-y-3">
+                        @forelse ($izinTerbaru as $izin)
+                            <li class="flex justify-between">
+                                <span>{{ $izin->user->nama }}</span>
+                                <span class="text-sm text-gray-500 capitalize">{{ $izin->jenis }}</span>
+                            </li>
+                        @empty
+                            <li class="text-gray-500 text-sm">Belum ada izin yang perlu divalidasi</li>
+                        @endforelse
+                    </ul>
+                </div>
         </div>
+</div>
 
-
-
+    </div>
     </div>
     </div>
 

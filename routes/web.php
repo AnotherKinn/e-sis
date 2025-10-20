@@ -14,7 +14,9 @@ use App\Http\Controllers\Siswa\ProfilController;
 use App\Http\Controllers\Siswa\DashboardController as DashboardSiswaController;
 use App\Http\Controllers\Admin\DashboardController as DashboardAdminController;
 use App\Exports\UserFormatExport;
+use App\Http\Controllers\Admin\NotifikasiController;
 use App\Http\Controllers\Admin\UserExportController;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
 
@@ -22,9 +24,9 @@ Route::get('/', function () {
     return view('landing-page');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('admin.dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -34,7 +36,7 @@ Route::middleware('auth')->group(function () {
 
 
 // Route untuk Admin (bisa admin & petugas)
-Route::prefix('admin')->middleware(['auth', 'role:admin,petugas'])->group(function () {
+Route::prefix('admin')->middleware(['auth:petugas,web', 'role:admin,petugas'])->group(function () {
     // Route Dashboard Admin
     Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
 
@@ -95,6 +97,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,petugas'])->group(functi
     Route::put('/petugas/edit/{petugas}', [PetugasController::class, 'update'])->name('admin.petugas.update');
     Route::delete('/petugas/destroy/{petugas}', [PetugasController::class, 'destroy'])->name('admin.petugas.destroy');
 
+
     // Scanner QR Code untuk admin/petugas
     Route::get('izin/scanner', function () {
         return view('admin.izin.scanner');
@@ -108,10 +111,25 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,petugas'])->group(functi
     // Route Laporan Izin
     Route::get('/izin', [IzinController::class, 'index'])->name('admin.izin.index');
     Route::get('/izin/search', [IzinController::class, 'search'])->name('admin.izin.search');
+    Route::get('/izin/export-excel', [IzinController::class, 'exportExcel'])->name('admin.izin.export');
+
+    // Route Manajemen Notifikasi
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
+
 
     // Route Scanner QR Code di Admin
     Route::get('/izin/cetak/{id}/{token}', [IzinController::class, 'cetak'])->name('admin.izin.cetak');
 });
+
+// Endpoint REST notifikasi
+// routes/web.php
+Route::get('/notifikasi', function () {
+    return App\Models\Notifikasi::where('user_id', auth()->id())
+        ->latest()
+        ->take(10)
+        ->get();
+})->middleware('auth');
+
 
 // Route untuk Siswa (hanya siswa)
 Route::prefix('siswa')->middleware(['auth', 'role:siswa'])->group(function () {
@@ -135,14 +153,13 @@ Route::prefix('siswa')->middleware(['auth', 'role:siswa'])->group(function () {
         // Walikelas
         Route::get('/walikelas', [ProfilController::class, 'walikelas'])->name('siswa.profil.walikelas');
 
-
-        // Route Manajemen Pengajuan Form
-        Route::get('/form-izin')->name('form-izin');
-        Route::post('/form-izin')->name('form-izin.store');
+        // Notifikasi
+        Route::get('/notifikasi', [ProfilController::class, 'notifikasi'])->name('siswa.profil.notifikasi');
     });
 
     // Route Manajemen Pengajuan Izin
     // Formulir pengajuan izin (tahap 1)
+    Route::get('/izin/index', [IzinSiswaController::class, 'index'])->name('izin.index'); //index
     Route::get('/izin', [IzinSiswaController::class, 'create'])->name('izin.create');
     Route::post('/izin', [IzinSiswaController::class, 'store'])->name('izin.store');
 
@@ -162,5 +179,7 @@ Route::prefix('siswa')->middleware(['auth', 'role:siswa'])->group(function () {
     // Riwayat izin siswa
     Route::get('/izin/riwayat', [IzinSiswaController::class, 'riwayat'])->name('izin.riwayat');
 });
+
+
 
 require __DIR__ . '/auth.php';

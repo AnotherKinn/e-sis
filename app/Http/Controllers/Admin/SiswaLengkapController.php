@@ -71,6 +71,8 @@ class SiswaLengkapController extends Controller
 
         SiswaLengkap::create($request->all());
 
+        notify()->success('Data siswa berhasil ditambahkan');
+
         return redirect()->route('admin.data-siswa')->with('success', 'Data siswa berhasil ditambahkan.');
     }
 
@@ -110,6 +112,8 @@ class SiswaLengkapController extends Controller
 
         // hapus akun
         $user->delete();
+
+        notify()->success('Akun dan biodata siswa berhasil dihapus', 'Berhasil');
 
         return redirect()->route('admin.data-siswa')
             ->with('success', 'Akun dan biodata siswa berhasil dihapus.');

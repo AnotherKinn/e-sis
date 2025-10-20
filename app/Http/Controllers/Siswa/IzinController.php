@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Siswa;
 
+use App\Events\BuktiUploadedEvent;
 use App\Events\IzinCreated;
 use App\Http\Controllers\Controller;
 use App\Models\Izin;
@@ -9,6 +10,7 @@ use App\Models\Petugas;
 use App\Models\SiswaLengkap;
 use App\Models\User;
 use App\Models\WaliKelas;
+use App\Models\Notifikasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Endroid\QrCode\Builder\Builder;
@@ -16,14 +18,22 @@ use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
+use Mckenziearts\Notify\Facades\Notify;
 
 class IzinController extends Controller
 {
+
+    public function index() {
+        return view('siswa.izin.index');
+    }
+
     // Tampilkan form izin (tahap 1)
     public function create()
     {
         $siswa = Auth::user();
         $izin = Izin::where('user_id', $siswa->id)->latest()->first();
+
+
 
         if ($izin) {
             if ($izin->status_izin === 'baru') {
@@ -41,6 +51,10 @@ class IzinController extends Controller
 
 
         $walikelas = $siswa->walikelas;
+
+        if (!$siswa->nis || !$siswa->nama || !$walikelas) {
+            notify()->warning('Data anda masih belum lengkap, silahkan isi biodata terlebih dahulu', 'Peringatan');
+        }
 
         return view('siswa.izin.create', compact('siswa', 'walikelas'));
     }
@@ -95,8 +109,18 @@ class IzinController extends Controller
         // update izin
         $izin->update(['qr_code' => $qrPath]);
 
+        $petugasList = User::where('role', 'petugas')->get();
+        foreach ($petugasList as $petugas) {
+            Notifikasi::create([
+                'user_id' => $petugas->id,
+                'judul'   => 'Izin Baru',
+                'pesan'   => $user->nama . ' mengajukan izin: ' . $izin->jenis_izin,
+            ]);
+        }
+
         event(new IzinCreated($izin));
 
+        notify()->success('Izin berhasil diajukan, silahkan scan QR Code berikut ke petugas TU', 'Berhasil');
         // Redirect ke halaman QR
         return redirect()->route('siswa.izin.qr', [
             'id' => $izin->id,
@@ -165,6 +189,10 @@ class IzinController extends Controller
             'bukti_izin' => $path,
             'status_izin' => 'menunggu_validasi'
         ]);
+
+        event(new BuktiUploadedEvent($izin));
+
+        notify()->success('Bukti izin berhasil diunggah', 'Berhasil');
 
         return redirect()->route('izin.upload.form', $izin->id)
             ->with('success', 'Bukti izin berhasil diunggah.');

@@ -15,7 +15,9 @@ class ProfilController extends Controller
 {
     public function profil()
     {
-        return view('siswa.profil.index');
+        $user = auth()->user();
+        $siswa = $user->siswaLengkap;
+        return view('siswa.profil.index', compact('user', 'siswa'));
     }
 
     public function dataDiri()
@@ -80,6 +82,8 @@ class ProfilController extends Controller
             $user->siswaLengkap()->create($validated);
         }
 
+        notify()->success('Data diri berhasil disimpan', 'Berhasil');
+
         return redirect()->route('siswa.profil.data-diri')
             ->with('success', 'Data diri berhasil disimpan.');
     }
@@ -104,14 +108,15 @@ class ProfilController extends Controller
             $walikelas = \App\Models\Walikelas::where('kelas_id', $siswa->kelas_id)->first();
         }
 
-        return view('siswa.profil.walikelas.index', compact('walikelas'));
+        return view('siswa.profil.walikelas.index', compact('walikelas', 'user'));
     }
 
 
     public function editPassword()
     {
+        $user = auth()->user();
         $siswa = auth()->user()->siswaLengkap;
-        return view('siswa.profil.pengaturan.password.edit', compact('siswa'));
+        return view('siswa.profil.pengaturan.password.edit', compact('user', 'siswa'));
     }
 
     public function updatePassword(Request $request)
@@ -132,6 +137,14 @@ class ProfilController extends Controller
         ]);
 
         return redirect()->route('siswa.profil.pengaturan')->with('success', 'Password berhasil diperbarui');
+    }
+
+    public function notifikasi()
+    {
+        $user = auth()->user();
+        $siswa = auth()->user()->siswaLengkap;
+
+        return view('siswa.profil.notifikasi.index', compact('user', 'siswa'));
     }
 
     public function destroy()

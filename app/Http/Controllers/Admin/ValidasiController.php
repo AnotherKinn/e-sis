@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\IzinValidatedEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Izin;
@@ -44,6 +45,9 @@ class ValidasiController extends Controller
             'status_izin'     => 'disetujui',
             'hasil_validasi' => $request->aksi
         ]);
+
+        event(new IzinValidatedEvent($izin));
+        notify()->success('Izin siswa berhasil divalidasi dan diselesaikan.', 'Berhasil');
 
         return redirect()->route('admin.validasi.index')
             ->with('success', 'Izin siswa berhasil divalidasi dan diselesaikan.');

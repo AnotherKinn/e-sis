@@ -1,17 +1,17 @@
 <x-app-layout>
-    <div class="p-6">
-        <h1 class="text-xl font-bold mb-4">Edit Petugas</h1>
+    {{-- Versi Desktop --}}
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg mx-auto mt-10 hidden md:block">
+        <h2 class="text-xl font-bold mb-4 text-center">Edit Petugas</h2>
 
         <form action="{{ route('admin.petugas.update', $petugas->id) }}" method="POST" class="space-y-4">
             @csrf
             @method('PUT')
 
-            {{-- Nama Petugas --}}
+            {{-- Nama --}}
             <div>
-                <label for="nama" class="block font-medium">Nama Petugas</label>
-                <input type="text" name="nama" id="nama"
-                       value="{{ old('nama', $petugas->user->nama) }}"
-                       class="w-full border rounded p-2">
+                <label class="block font-medium">Nama Petugas</label>
+                <input type="text" name="nama" value="{{ old('nama', $petugas->nama) }}"
+                    class="w-full border p-2 rounded" required>
                 @error('nama')
                     <div class="text-red-600 text-sm">{{ $message }}</div>
                 @enderror
@@ -19,31 +19,86 @@
 
             {{-- NIP --}}
             <div>
-                <label for="nip" class="block font-medium">NIP</label>
-                <input type="text" name="nip" id="nip"
-                       value="{{ old('nip', $petugas->user->nis) }}"
-                       class="w-full border rounded p-2">
-                @error('nip') 
-                    <div class="text-red-600 text-sm">{{ $message }}</div> 
+                <label class="block font-medium">NIP</label>
+                <input type="text" name="nip" value="{{ old('nip', $petugas->nip) }}"
+                    class="w-full border p-2 rounded" required>
+                @error('nip')
+                    <div class="text-red-600 text-sm">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Password --}}
+            <div>
+                <label class="block font-medium">Password (isi kalau mau ganti)</label>
+                <input type="password" name="password" class="w-full border p-2 rounded"
+                    placeholder="Minimal 8 karakter">
+                @error('password')
+                    <div class="text-red-600 text-sm">{{ $message }}</div>
                 @enderror
             </div>
 
             {{-- Status --}}
             <div>
-                <label for="status" class="block font-medium">Status</label>
-                <select name="status" id="status" class="w-full border rounded p-2">
+                <label class="block font-medium">Status</label>
+                <select name="status" class="w-full border p-2 rounded" required>
                     <option value="aktif" {{ old('status', $petugas->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
                     <option value="nonaktif" {{ old('status', $petugas->status) == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
                 </select>
-                @error('status') 
-                    <div class="text-red-600 text-sm">{{ $message }}</div> 
+                @error('status')
+                    <div class="text-red-600 text-sm">{{ $message }}</div>
                 @enderror
             </div>
 
             {{-- Tombol --}}
+            <div class="flex justify-between gap-4 text-center">
+                <a href="{{ route('admin.data-petugas')}}" class="w-full px-4 py-2 bg-gray-600 text-white rounded">Kembali</a>
+                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded">Update</button>
+            </div>
+        </form>
+    </div>
+
+    {{-- Versi Mobile --}}
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg mx-auto mt-10 md:hidden">
+        <h2 class="text-xl font-bold mb-4 text-center">Edit Petugas</h2>
+
+        <form action="{{ route('admin.petugas.update', $petugas->id) }}" method="POST" class="space-y-4">
+            @csrf
+            @method('PUT')
+
+            {{-- Nama --}}
             <div>
-                <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded">Update</button>
-                <a href="{{ route('admin.data-petugas') }}" class="bg-gray-500 text-white px-4 py-2 rounded">Kembali</a>
+                <label class="block font-medium">Nama Petugas</label>
+                <input type="text" name="nama" value="{{ old('nama', $petugas->nama) }}"
+                    class="w-full border p-2 rounded" required>
+            </div>
+
+            {{-- NIP --}}
+            <div>
+                <label class="block font-medium">NIP</label>
+                <input type="text" name="nip" value="{{ old('nip', $petugas->nip) }}"
+                    class="w-full border p-2 rounded" required>
+            </div>
+
+            {{-- Password --}}
+            <div>
+                <label class="block font-medium">Password (isi kalau mau ganti)</label>
+                <input type="password" name="password" class="w-full border p-2 rounded"
+                    placeholder="Minimal 8 karakter">
+            </div>
+
+            {{-- Status --}}
+            <div>
+                <label class="block font-medium">Status</label>
+                <select name="status" class="w-full border p-2 rounded" required>
+                    <option value="aktif" {{ old('status', $petugas->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                    <option value="nonaktif" {{ old('status', $petugas->status) == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                </select>
+            </div>
+
+            {{-- Tombol --}}
+            <div class="flex justify-between gap-4 text-center">
+                <a href="{{ route('admin.data-petugas')}}" class="w-full px-4 py-2 bg-gray-600 text-white rounded">Kembali</a>
+                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded">Update</button>
             </div>
         </form>
     </div>

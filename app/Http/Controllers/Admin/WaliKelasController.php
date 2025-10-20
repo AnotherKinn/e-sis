@@ -70,6 +70,8 @@ class WaliKelasController extends Controller
 
         WaliKelas::create($validated);
 
+        notify()->success('Success', 'Data walikelas berhasil ditambahkan');
+
         return redirect()->route('admin.data-walikelas')
             ->with('success', 'Data wali kelas berhasil ditambahkan');
     }
@@ -111,6 +113,8 @@ class WaliKelasController extends Controller
 
         $walikelas->update($validated);
 
+        notify()->success('Success', 'Data walikelas berhasil diperbarui');
+
         return redirect()->route('admin.data-walikelas')
             ->with('success', 'Data wali kelas berhasil diperbarui');
     }
@@ -118,6 +122,8 @@ class WaliKelasController extends Controller
     public function destroy(WaliKelas $walikelas)
     {
         $walikelas->delete();
+
+        notify()->success('Data walikelas berhasil dihapus', 'Berhasil');
         return redirect()->route('admin.data-walikelas')->with('success', 'Data wali kelas berhasil dihapus');
     }
 }

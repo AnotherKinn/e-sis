@@ -1,6 +1,6 @@
 <x-app-layout>
-    <div class="p-6">
-        <h1 class="text-2xl font-bold mb-4">Tambah Data Siswa</h1>
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg mx-auto mt-10">
+        <h1 class="text-2xl font-bold mb-4 text-center">Tambah Data Siswa</h1>
 
         <form action="{{ route('admin.siswa.store') }}" method="POST" class="space-y-4">
             @csrf
@@ -59,7 +59,10 @@
                 <input type="text" name="nomor_hp" class="w-full border p-2 rounded">
             </div>
 
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Simpan</button>
+            <div class="flex justify-between gap-4 text-center">
+                <a href="{{route('admin.data-siswa')}}" class="w-full px-4 py-2 bg-gray-600 text-white rounded">Batal</a>
+                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded">Simpan</button>
+            </div>
         </form>
     </div>
 </x-app-layout>

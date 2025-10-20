@@ -1,6 +1,6 @@
 <x-app-layout>
-    <div class="p-6">
-        <h2 class="text-xl font-bold mb-4">Tambah Wali Kelas</h2>
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg mx-auto mt-10">
+        <h2 class="text-xl font-bold mb-4 text-center">Tambah Wali Kelas</h2>
 
         <form action="{{ route('admin.walikelas.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
@@ -39,7 +39,10 @@
             </div>
 
 
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
+            <div class="flex justify-between gap-4 text-center">
+                <a href="{{ route('admin.data-walikelas')}}" class="w-full px-4 py-2 bg-gray-600 text-white rounded">Kembali</a>
+                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
+            </div>
         </form>
     </div>
 </x-app-layout>

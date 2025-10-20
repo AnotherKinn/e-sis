@@ -10,8 +10,10 @@
         "endroid/qr-code": "^5.0",
         "laravel/breeze": "^2.3",
         "laravel/framework": "^11.0",
+        "laravel/reverb": "^1.6",
         "laravel/tinker": "^2.9",
         "maatwebsite/excel": "^3.1",
+        "mckenziearts/laravel-notify": "^2.7",
         "simplesoftwareio/simple-qrcode": "^4.2"
     },
     "require-dev": {
